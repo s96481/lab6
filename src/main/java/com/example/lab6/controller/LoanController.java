@@ -10,7 +10,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/loans")
 public class LoanController {
-    private final LoanService service;
+    private final LoanService service; 
 
     public LoanController(LoanService service) { this.service = service; }
 

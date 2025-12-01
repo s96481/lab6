@@ -15,6 +15,10 @@ public class ReaderService {
     }
 
     public Reader create(Reader reader) {
+        // email ma być unikalny
+        if (repo.findByEmail(reader.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("Email already in use: " + reader.getEmail());
+        }
         return repo.save(reader);
     }
 
@@ -28,8 +32,15 @@ public class ReaderService {
 
     public Reader update(Long id, Reader update) {
         return repo.findById(id).map(existing -> {
+            repo.findByEmail(update.getEmail()).ifPresent(other -> {
+                if (!other.getId().equals(id)) {
+                    throw new IllegalArgumentException("Email already in use: " + update.getEmail());
+                }
+            });
+
             existing.setName(update.getName());
             existing.setEmail(update.getEmail());
+
             return repo.save(existing);
         }).orElseThrow(() -> new IllegalArgumentException("Reader not found: " + id));
     }
@@ -38,4 +49,3 @@ public class ReaderService {
         repo.deleteById(id);
     }
 }
-
